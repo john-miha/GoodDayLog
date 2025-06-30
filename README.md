@@ -1,0 +1,2 @@
+# GoodDayLog
+V字開発プロセスを生成AIをフル活用して回す練習/勉強用のAndroidアプリ
