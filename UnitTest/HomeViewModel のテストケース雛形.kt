@@ -1,3 +1,9 @@
+// プロダクトコードのクラスを直接importすることを想定
+import com.example.gooddaylog.data.Diary
+import com.example.gooddaylog.data.DiaryRepository
+import com.example.gooddaylog.ui.home.HomeUiState
+import com.example.gooddaylog.ui.home.HomeViewModel
+
 import app.cash.turbine.test
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +44,9 @@ class HomeViewModelTest {
 
     // Coroutinesのメインディスパッチャをテスト用に置き換える
     private val testDispatcher = StandardTestDispatcher()
+    
+    // レビュー指摘に基づき、テストの再現性を保証するための固定タイムスタンプを定義
+    private const val FAKE_TIMESTAMP = 1720494000000L // 2024-07-09T12:00:00Z
 
     @BeforeEach
     fun setUp() {
@@ -59,9 +68,10 @@ class HomeViewModelTest {
         @DisplayName("成功: リポジトリから日記リストを取得し、UiStateが更新されること")
         fun `GIVEN repository returns diaries WHEN viewModel is initialized THEN uiState contains diaries`() = runTest {
             // Arrange
+            // レビュー指摘に基づき、System.currentTimeMillis()を固定値に変更
             val fakeDiaries = listOf(
-                Diary(id = 1, content = "素晴らしい一日だった", date = System.currentTimeMillis(), createdAt = System.currentTimeMillis()),
-                Diary(id = 2, content = "良いことがあった", date = System.currentTimeMillis(), createdAt = System.currentTimeMillis())
+                Diary(id = 1, content = "素晴らしい一日だった", date = FAKE_TIMESTAMP, createdAt = FAKE_TIMESTAMP),
+                Diary(id = 2, content = "良いことがあった", date = FAKE_TIMESTAMP, createdAt = FAKE_TIMESTAMP)
             )
             whenever(diaryRepository.getDiaries()).thenReturn(flowOf(fakeDiaries))
 
@@ -119,16 +129,4 @@ class HomeViewModelTest {
     // --- 他のViewModelのロジック（日付選択、FABクリックなど）に関するテストをここに追加 ---
 }
 
-// 以下はテスト対象の仮クラス（実際のプロダクトコードに置き換える）
-// data class Diary(val id: Long, val content: String, val date: Long, val createdAt: Long)
-// data class HomeUiState(
-//     val diaries: List<Diary> = emptyList(),
-//     val isLoading: Boolean = false,
-//     val error: String? = null
-// )
-// interface DiaryRepository {
-//     fun getDiaries(): kotlinx.coroutines.flow.Flow<List<Diary>>
-// }
-// class HomeViewModel(private val diaryRepository: DiaryRepository) {
-//     val uiState: kotlinx.coroutines.flow.StateFlow<HomeUiState> = //...
-// }
+// レビュー指摘に基づき、プロダクトコードのクラスを直接importして使用するため、以下の仮クラス定義は削除
